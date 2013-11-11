@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Laundry Now</title>
+    <link href="./css/bootstrap.css" rel="stylesheet" type="text/css" />
+	<link href="./css/custom.css" rel="stylesheet" type="'text/css" media="screen" />
+	<link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+ 	<div class="content">
+ 		<div id="topBar" class="">
+ 				<img id="venmo" src="app-icon.png" /></a>
+ 				<h1>Laundry Now</h1>
+ 		</div>
+ 		<div id="midContent" class="row">
+ 			<div id="statusContainer"></div>	
+ 			<% if(monitor == undefined){ %>
+ 			<div id="formContainer" class="form-inline">
+ 				<input id="code" class="form-control" type="text" name="sync" placeholder="Device Code"/>
+ 				<input id="submitCode" class="btn btn-xs btn-success form-control" type="submit" value="Enter" />
+ 			</div>
+ 			<%}%>
+ 			<div id="btnContainer">
+ 				<a href="/set_arduino"><button id="device" class="btn btn-warning btn-lg">Set Device</button></a>
+ 				<button id="progress" class="btn  btn-warning btn-lg">Check Progress</button>
+ 			</div>
+ 		</div>
+
+ 		 <div id="venmo_form">
+ 				<input class="form-control" id="note" placeholder="Note" />
+ 				<input class="form-control" id="phone" placeholder="Phone Number" />
+ 				<button id="venmoSubmit" class="btn btn-lg btn-success">Pay With Venmo</button>
+ 		</div>
+ 	</div>
+ 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="./js/bootstrap.js"></script>
+
+	<script>
+		$(document).ready(function(){
+
+			$('#submitCode').click(function(){ 
+				var code = $('#code').val(); 
+				console.log(code); 
+				$.ajax({  
+					url: "/initialize",  
+					type: "POST",  
+					data: {sync: code},   
+					success: function(response) {  
+						alert(response); 
+						$('#formContainer').fadeOut(400);  
+					}
+				});
+			}); 
+
+
+			$('#progress').click(function(){
+				setInterval(function(){
+					$.ajax({
+						url : "/check_status",
+						type : "GET",
+						success : function(response){ 
+							if(response.status == 0){
+								$('#statusContainer').html('<h3>Your Load is Complete</h3>');
+								clearInterval(); 
+							}
+							else if(response.status == 1){
+								$('#statusContainer').html('<h3>Your Load in Progress</h3>');
+							}
+							else if(response.status == -1){
+								$('#statusContainer').html('<h3>Your Load Hasn\'t Started</h3>');
+							}
+							else clearInterval(); 
+						}
+					}); 		
+				}, 5000); 
+			});
+
+			$("#venmo").click(function(){
+				$('#midContent').fadeOut(400); 
+				$('#venmo_form').css('display', 'block'); 
+			}); 
+
+
+			$('#topBar h1').click(function(){
+				$('#venmo_form').css('display', 'none'); 
+				$('#midContent').fadeIn(400);
+			});
+
+			$('#venmoSubmit').click(function(){
+
+				$('#venmo_form').css('display', 'none'); 
+				$('#midContent').fadeIn(400);
+				alert('Venmo Payment Successful');
+			});
+
+		}); 
+
+	</script>
+  </body>
+</html>
