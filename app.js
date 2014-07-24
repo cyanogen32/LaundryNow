@@ -40,6 +40,13 @@ app.get('/recieve_pulse', routes.recieve_pulse);
 app.post('/initialize', routes.initialize);
 app.get('/set_arduino', routes.set_arduino);
 app.get('/check_status', routes.check_status);
+app.get('/recieve_pulse', routes.recieve_pulse);
+
+
+//User Routes
+app.post('/initialize', routes.initialize);
+app.get('/set_arduino', routes.set_arduino);
+app.get('/check_status', routes.check_status);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
